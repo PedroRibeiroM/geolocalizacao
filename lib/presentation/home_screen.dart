@@ -5,10 +5,8 @@ import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 
 /*
-
 MarkerLayer: Adiciona um marcador ao mapa na posição atual do usuário.
 */
-
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -17,9 +15,10 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   LatLng? _currentPosition;
+  LatLng _cristoPosition = LatLng(-22.951916, -43.210466);
   //Instancia o serviço que obtém a localização do usuário.
   final LocationService _locationService = LocationService();
-
+  
   @override
   void initState() {
     //Método inicial do widget que chama _getCurrentLocation() para obter a localização do usuário 
@@ -36,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         //Armazena a localização atual do usuário como um objeto LatLng (latitude e longitude).
         _currentPosition = LatLng(position.latitude, position.longitude);
-      });
+      });     
     } catch (e) {
       //Se houver um erro ao obter a localização, ele será registrado no console.
       print('Erro ao obter a localização: $e');
@@ -47,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Minha Localização no Mapa'),
+        title: Text('Minha localização até o Cristo Redentor'),
       ),
       body: _currentPosition == null
           ? Center(child: CircularProgressIndicator())
@@ -55,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
           : FlutterMap(
               options: MapOptions(
                 center: _currentPosition,
-                zoom: 15,
+                zoom: 7,
               ),
               children: [
                 //Define o provedor do mapa, que neste caso é o OpenStreetMap, um serviço gratuito de mapas.
@@ -84,6 +83,24 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: Colors.red,
                         size: 40,
                       ),
+                    ),
+                    Marker(
+                      point: _cristoPosition!, //! -> null assertion operator "forçando" a conversão de um valor nulo para um valor não nulo
+                      width: 80,
+                      height: 80,
+                      builder: (ctx) => Icon(
+                        Icons.location_pin,
+                        color: Colors.red,
+                        size: 40,
+                      ),
+                    ),
+                  ],
+                ),
+                PolylineLayer(
+                  polylines: [
+                    Polyline(
+                      points: [_currentPosition!, _cristoPosition],
+                      color: Colors.blue,
                     ),
                   ],
                 ),
